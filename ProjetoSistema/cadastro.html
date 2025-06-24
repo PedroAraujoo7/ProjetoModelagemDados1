@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- Declaração do tipo de documento HTML5 -->
+<html lang="pt-br"> <!-- Define o idioma da página como português do Brasil -->
+<head>
+    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres como UTF-8 -->
+    <title>Cadastro de Usuário</title> <!-- Título da página que aparece na aba do navegador -->
+    <link rel="stylesheet" href="css/style.css"> <!-- Link para o arquivo de estilos -->
+    
+    <script>
+        // Validação extra de e-mail no lado do cliente (opcional, reforço)
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.querySelector("form");
+            form.addEventListener("submit", (e) => {
+                const email = document.getElementById("email").value;
+                const regexEmail = /^[^\s@]+@[^\s@]+\.(com)$/i; // Padrão básico para e-mail válido
+
+                if (!regexEmail.test(email)) {
+                    alert("Por favor, insira um e-mail válido.");
+                    e.preventDefault(); // Impede o envio do formulário
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h2>Cadastro de Usuário</h2> <!-- Cabeçalho principal da página -->
+
+    <form action="cadastro.php" method="POST" enctype="multipart/form-data">
+        <!-- Formulário para enviar dados de cadastro para cadastro.php com suporte para upload de arquivos -->
+
+        <label for="nome">Nome:</label> <!-- Rótulo para o campo do nome -->
+        <input type="text" name="nome" id="nome" required><br> <!-- Campo de texto para o nome do usuário -->
+
+        <label for="email">Email:</label> <!-- Rótulo para o campo do email -->
+        <input type="email" name="email" id="email" required><br> <!-- Campo de entrada para o e-mail (já tem validação HTML) -->
+
+        <label for="senha">Senha:</label> <!-- Rótulo para o campo da senha -->
+        <input type="password" name="senha" id="senha" required><br> <!-- Campo de entrada da senha -->
+
+        <label for="imagem">Imagem de Perfil:</label> <!-- Rótulo para o campo de upload de imagem -->
+        <input type="file" name="imagem" id="imagem"><br> <!-- Campo de seleção de imagem de perfil -->
+
+        <label for="is_admin">Administrador:</label> <!-- Rótulo para o checkbox de status admin -->
+        <input type="checkbox" name="is_admin" id="is_admin"><br> <!-- Checkbox: se marcado, define o usuário como admin -->
+
+        <button type="submit">Cadastrar</button> <!-- Botão de envio do formulário -->
+    </form>
+
+    <p>Já tem uma conta? <a href="index.php">Fazer Login</a></p> <!-- Link para a tela de login -->
+</body>
+</html>

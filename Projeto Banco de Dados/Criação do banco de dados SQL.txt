@@ -1,0 +1,26 @@
+-- Criação do banco de dados
+CREATE DATABASE IF NOT EXISTS sistemausuarios
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_general_ci;
+USE sistemausuarios;
+-- Tabela de usuários
+CREATE TABLE usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(50) UNIQUE,
+    nome VARCHAR(50),
+    senha VARCHAR(10),
+    imagem VARCHAR(255),
+    is_admin TINYINT(1)
+);
+-- Tabela de eventos com chave estrangeira e ON DELETE CASCADE
+CREATE TABLE eventos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    titulo VARCHAR(100),
+    descricao TEXT,
+    data_evento DATE,
+    status TINYINT(1),
+    usuario_id INT,
+    CONSTRAINT fk_usuario_eventos FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE
+);
