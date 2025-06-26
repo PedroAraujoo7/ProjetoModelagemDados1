@@ -78,6 +78,14 @@ class Usuario {
             $this->is_admin = $dados['is_admin'];
         }
     }
+    // Atualiza a imagem de perfil do usuário no banco de dados
+public function atualizarImagem() {
+    $query = "UPDATE usuarios SET imagem = :imagem WHERE email = :email";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(":imagem", $this->imagem);
+    $stmt->bindParam(":email", $this->email);
+    return $stmt->execute();
+}
 
     // Cria um novo evento associado ao usuário logado
     public function criarEvento($titulo, $data_evento, $descricao) {

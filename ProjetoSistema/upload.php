@@ -12,20 +12,26 @@ include_once 'includes/Usuario.php'; // Inclui a classe Usuario
 $usuario = new Usuario(); // Instancia um novo objeto Usuario
 $usuario->carregarDados($_SESSION['usuario']); // Carrega os dados do usuário logado
 
-$mensagem = ""; // Variável para armazenar mensagens de sucesso ou erro do upload
+$mensagem = ""; // Variável para mensagens de sucesso ou erro
 
 // Verifica se o formulário foi enviado e se o campo de imagem está presente
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['imagem'])) {
-    $targetDir = "uploads/"; // Diretório de destino para o upload
-    $fileName = basename($_FILES['imagem']['name']); // Obtém o nome base do arquivo
-    $targetFilePath = $targetDir . $fileName; // Caminho final do arquivo
+    $targetDir = "uploads/"; // Diretório de destino
+    $fileName = basename($_FILES['imagem']['name']);
+    $targetFilePath = $targetDir . $fileName;
 
-    // Move o arquivo temporário para o diretório de destino
+    // Move o arquivo e atualiza o banco
     if (move_uploaded_file($_FILES['imagem']['tmp_name'], $targetFilePath)) {
-        $usuario->imagem = $fileName; // Atualiza o nome da imagem no objeto usuário
-        $mensagem = '<div class="message success">Imagem enviada com sucesso.</div>';
+        $usuario->imagem = $fileName;
+
+        // Verifica se existe o método atualizarImagem
+        if (method_exists($usuario, 'atualizarImagem') && $usuario->atualizarImagem()) {
+            $mensagem = '<div class="message success">Imagem enviada e atualizada com sucesso.</div>';
+        } else {
+            $mensagem = '<div class="message error">Erro ao atualizar a imagem no banco de dados.</div>';
+        }
     } else {
-        $mensagem = '<div class="message error">Erro ao enviar a imagem.</div>';
+        $mensagem = '<div class="message error">Erro ao fazer upload do arquivo.</div>';
     }
 }
 ?>
@@ -34,28 +40,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['imagem'])) {
 <head>
     <meta charset="UTF-8">
     <title>Upload de Imagem</title>
-    <!-- Inclui o arquivo de estilos do projeto -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
-        <!-- Título da página -->
         <h2>Envio de Imagem de Perfil</h2>
 
-        <!-- Exibe a mensagem de sucesso ou erro, se houver -->
         <?= $mensagem ?>
 
-        <!-- Formulário para envio da imagem -->
-        <form method="POST" enctype="multipart/form-data">
-            <!-- Campo para selecionar o arquivo -->
-            <label for="imagem">Selecione uma imagem:</label>
-            <input type="file" name="imagem" id="imagem" required>
+        <?php if (!empty($usuario->imagem)): ?>
+            <p>Imagem atual:</p>
+            <img src="uploads/<?= htmlspecialchars($usuario->imagem) ?>" alt="Imagem atual" width="120"><br><br>
+        <?php endif; ?>
 
-            <!-- Botão para envio -->
+        <form method="POST" enctype="multipart/form-data">
+            <label for="imagem">Selecione uma nova imagem:</label>
+            <input type="file" name="imagem" id="imagem" required>
             <button type="submit">Enviar Imagem</button>
         </form>
 
-        <!-- Link para voltar ao painel do usuário -->
         <p><a href="painel.php">← Voltar para o Painel</a></p>
     </div>
 </body>

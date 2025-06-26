@@ -1,26 +1,28 @@
--- Criação do banco de dados
+-- Cria o banco de dados 'sistemausuarios' apenas se ele ainda não existir
 CREATE DATABASE IF NOT EXISTS sistemausuarios
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_general_ci;
+CHARACTER SET utf8mb4         -- Define o conjunto de caracteres para suportar símbolos e emojis
+COLLATE utf8mb4_general_ci;   -- Define a ordenação e comparação de texto (sem diferenciação de maiúsculas e minúsculas)
+-- Seleciona o banco criado para as próximas operações
 USE sistemausuarios;
--- Tabela de usuários
+-- Criação da tabela 'usuarios', que armazena os dados dos usuários do sistema
 CREATE TABLE usuarios (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    email VARCHAR(50) UNIQUE,
-    nome VARCHAR(50),
-    senha VARCHAR(10),
-    imagem VARCHAR(255),
-    is_admin TINYINT(1)
+    id INT PRIMARY KEY AUTO_INCREMENT,      -- Identificador único de cada usuário, gerado automaticamente
+    email VARCHAR(50) UNIQUE,               -- E-mail do usuário (único, não pode repetir)
+    nome VARCHAR(50),                       -- Nome do usuário
+    senha VARCHAR(100),                     -- Senha criptografada (campo maior para suportar hashes)
+    imagem VARCHAR(255),                    -- Caminho para a imagem/foto de perfil do usuário
+    is_admin TINYINT(1)                     -- Flag para indicar se o usuário é administrador (1 = sim, 0 = não)
 );
--- Tabela de eventos com chave estrangeira e ON DELETE CASCADE
+-- Criação da tabela 'eventos', que armazena os eventos criados por usuários
 CREATE TABLE eventos (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    titulo VARCHAR(100),
-    descricao TEXT,
-    data_evento DATE,
-    status TINYINT(1),
-    usuario_id INT,
+    id INT PRIMARY KEY AUTO_INCREMENT,      -- Identificador único do evento
+    titulo VARCHAR(100),                    -- Título do evento
+    descricao TEXT,                         -- Descrição detalhada do evento
+    data_evento DATE,                       -- Data em que o evento ocorrerá
+    status TINYINT(1),                      -- Situação do evento (1 = ativo, 0 = inativo ou cancelado)
+    usuario_id INT,                         -- ID do usuário que criou o evento (chave estrangeira)
+    -- Define a relação com a tabela 'usuarios'
     CONSTRAINT fk_usuario_eventos FOREIGN KEY (usuario_id)
         REFERENCES usuarios(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE                   -- Se o usuário for deletado, seus eventos também serão removidos
 );
